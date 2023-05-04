@@ -5,7 +5,7 @@ States:
 - beer
 
 Transitions:
-- pay -> insert coin -> select
+- pay -> insert_coin -> select
 - select -> τ -> soda
 - select -> τ -> beer
 - soda -> get_soda -> pay
