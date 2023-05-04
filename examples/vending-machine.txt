@@ -1,0 +1,12 @@
+States:
+-> pay
+- soda
+- select
+- beer
+
+Transitions:
+- pay -> insert coin -> select
+- select -> τ -> soda
+- select -> τ -> beer
+- soda -> get_soda -> pay
+- beer -> get_beer -> pay
