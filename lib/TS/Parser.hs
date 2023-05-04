@@ -1,7 +1,8 @@
 module TS.Parser (parseTS) where
 
+import Data.Set (fromList)
 import TS.Model
-import Text.Parsec (char, letter, many, newline, space, string, (<|>))
+import Text.Parsec (char, letter, many, newline, option, space, string, (<|>))
 import Text.Parsec.String (Parser)
 import Utils (runParser)
 
@@ -10,20 +11,16 @@ parseTS = runParser ts
 
 ts :: Parser TransitionSystem
 ts = do
-  (initialState, states) <- parseStates
+  _ <- string "States:" >> newline
+  statesWithLabels <- many parseState
   _ <- newline
   transitions <- parseTransitions
+  let initialStates = map (\(state, _, _) -> state) $ filter (\(_, initial, _) -> initial) statesWithLabels
+  let states = map (\(state, _, _) -> state) statesWithLabels
+  let atomicPropositions = fromList $ concatMap (\(_, _, labels) -> labels) statesWithLabels
   let actions = map (\(_, action, _) -> action) transitions
-  let atomicPropositions = [] -- todo
   let labelingFunction _ = [] -- todo
-  return (states, actions, transitions, [initialState], atomicPropositions, labelingFunction)
-
-parseStates :: Parser (State, [State])
-parseStates = do
-  _ <- string "States:" >> newline
-  initialState <- parseInitialState
-  otherStates <- many parseState
-  return (initialState, initialState : otherStates)
+  return (states, actions, transitions, initialStates, atomicPropositions, labelingFunction)
 
 arrow :: Parser String
 arrow = string "->"
@@ -31,19 +28,18 @@ arrow = string "->"
 listItemStart :: Parser String
 listItemStart = string "-"
 
-parseInitialState :: Parser State
-parseInitialState = do
-  _ <- arrow >> space
-  name <- many letter
-  _ <- newline
-  return (State name)
+parseInit :: Parser Bool
+parseInit = do
+  _ <- string " (init)"
+  return True
 
-parseState :: Parser State
+parseState :: Parser (State, Bool, [AtomicProposition])
 parseState = do
   _ <- listItemStart >> space
   name <- many letter
+  initial <- option False parseInit
   _ <- newline
-  return (State name)
+  return (State name, initial, [])
 
 parseTransitions :: Parser [Transition]
 parseTransitions = do
