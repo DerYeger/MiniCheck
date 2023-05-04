@@ -12,4 +12,4 @@ type LabelingFunction = State -> [AtomicProposition]
 
 type Transition = (State, Action, State)
 
-type TransitionSystem = ([State], [Action], [Transition], [State], Set AtomicProposition, LabelingFunction)
+type TransitionSystem = (Set State, Set Action, [Transition], Set State, Set AtomicProposition, LabelingFunction)
