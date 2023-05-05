@@ -1,7 +1,7 @@
 module Semantics (evaluate) where
 
 import CTL.Model
-import Data.Set (Set, empty, fromList, isSubsetOf, toList, union, (\\))
+import Data.Set (Set, empty, fromList, intersection, isSubsetOf, toList, (\\))
 import TS.Model
 
 evaluate :: TransitionSystem -> StateFormula -> Bool
@@ -11,8 +11,8 @@ satState :: TransitionSystem -> StateFormula -> Set State
 satState ts@(TS states _ _ _ _ labelingFunction) f = case f of
   BoolLiteral b -> if b then states else empty
   Prop p -> fromList $ filter (\s -> AtomicProposition p `elem` labelingFunction s) (toList states)
-  Conjunct f1 f2 -> satState ts f1 `union` satState ts f2
-  Negation f -> states \\ satState ts f
+  Conjunct left right -> satState ts left `intersection` satState ts right
+  Negation inner -> states \\ satState ts inner
   _ -> error "not yet implemented"
 
 -- Exists p -> evaluatePathFormula ts p s
