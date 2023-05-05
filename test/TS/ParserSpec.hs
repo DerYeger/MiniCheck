@@ -13,7 +13,12 @@ vendingMachine = TS states actions transitions initialStates atomicPropositions 
     transitions = [T (State "pay") (Action "insert_coin") (State "select"), T (State "select") (Action "τ") (State "soda"), T (State "select") (Action "τ") (State "beer"), T (State "soda") (Action "get_soda") (State "pay"), T (State "beer") (Action "get_beer") (State "pay")]
     initialStates = fromList [State "pay"]
     atomicPropositions = fromList [AtomicProposition "soda", AtomicProposition "beer", AtomicProposition "pay", AtomicProposition "select"]
-    labelingFunction _ = []
+    labelingFunction state = case state of
+      State "pay" -> [AtomicProposition "pay"]
+      State "soda" -> [AtomicProposition "soda"]
+      State "select" -> [AtomicProposition "select"]
+      State "beer" -> [AtomicProposition "beer"]
+      _ -> []
 
 spec :: Spec
 spec = describe "the parser" $ do

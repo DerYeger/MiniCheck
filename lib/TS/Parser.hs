@@ -1,5 +1,6 @@
 module TS.Parser (parseTS) where
 
+import Data.List (find)
 import Data.Set (fromList)
 import TS.Model
 import Text.Parsec (char, endBy, letter, many, newline, option, sepBy, space, string, (<|>))
@@ -19,8 +20,11 @@ ts = do
   let states = map (\(state, _, _) -> state) statesWithLabels
   let atomicPropositions = concatMap (\(_, _, labels) -> labels) statesWithLabels
   let actions = map (\(T _ action _) -> action) transitions
-  let labelingFunction _ = [] -- todo
+  let labelingFunction = createLabelingFunction statesWithLabels
   return (TS (fromList states) (fromList actions) transitions (fromList initialStates) (fromList atomicPropositions) labelingFunction)
+
+createLabelingFunction :: [(State, Bool, [AtomicProposition])] -> LabelingFunction
+createLabelingFunction statesWithLabels state = maybe [] (\(_, _, labels) -> labels) (find (\(s, _, _) -> s == state) statesWithLabels)
 
 arrow :: Parser String
 arrow = string "->"
@@ -52,8 +56,7 @@ parseTransitions = do
   parseTransition `endBy` newline
 
 actionName :: Parser String
-actionName = do
-  many (letter <|> char '_')
+actionName = many (letter <|> char '_')
 
 parseTransition :: Parser Transition
 parseTransition = do
