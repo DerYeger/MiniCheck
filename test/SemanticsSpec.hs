@@ -12,24 +12,33 @@ vendingMachine = do
   return $ parseTS file
 
 spec :: Spec
-spec = describe "the semantics" $ do
+spec = describe "from examples" $ do
   it "always eventually pay" $ do
     ts <- vendingMachine
     let formula = parseCTL "A (F pay)"
-    let start = State "pay" -- todo randomize
-    evaluate ts formula start `shouldBe` True
+    evaluate ts formula `shouldBe` True
   it "exists eventually soda" $ do
     ts <- vendingMachine
     let formula = parseCTL "E (F soda)"
-    let start = State "pay" -- todo randomize
-    evaluate ts formula start `shouldBe` True
+    evaluate ts formula `shouldBe` True
   it "exists always selection followed by soda" $ do
     ts <- vendingMachine
-    let fornula = parseCTL "E (G (select -> F soda))"
-    let start = State "pay" -- todo randomize
-    evaluate ts fornula start `shouldBe` True
+    let formula = parseCTL "E (G (select -> A (X soda)))"
+    evaluate ts formula `shouldBe` True
   it "always eventually soda" $ do
     ts <- vendingMachine
     let formula = parseCTL "A (F soda)"
-    let start = State "pay" -- todo randomize
-    evaluate ts formula start `shouldBe` False
+    evaluate ts formula `shouldBe` False
+  describe "the basics" $ do
+    it "evaluates a boolean literal" $ do
+      ts <- vendingMachine
+      let formula = parseCTL "true"
+      evaluate ts formula `shouldBe` True
+    it "evaluates a proposition" $ do
+      ts <- vendingMachine
+      let formula = parseCTL "pay"
+      evaluate ts formula `shouldBe` True
+    it "evaluates an invalid proposition" $ do
+      ts <- vendingMachine
+      let formula = parseCTL "beer"
+      evaluate ts formula `shouldBe` False

@@ -63,9 +63,15 @@ forAll = do
 pathFormula :: Parser (PathFormula, Bool)
 pathFormula = do
   _ <- string "("
-  inner <- choice [eventually, always, CTL.Parser.until]
+  inner <- choice [next, eventually, always, CTL.Parser.until]
   _ <- string ")"
   return inner
+
+next :: Parser (PathFormula, Bool)
+next = do
+  _ <- string "X "
+  inner <- stateFormula
+  return (Next inner, False)
 
 eventually :: Parser (PathFormula, Bool)
 eventually = do

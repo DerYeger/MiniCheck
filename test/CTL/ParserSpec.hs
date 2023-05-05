@@ -36,6 +36,8 @@ spec = do
     it "derives xor" $ do
       parseCTL "(a xor b)" `shouldBe` Negation (Conjunct (Negation (Conjunct (Prop "a") (Negation (Prop "b")))) (Negation (Conjunct (Prop "b") (Negation (Prop "a")))))
   describe "path formula parser" $ do
+    it "parses next" $ do
+      parseCTL "E (X a)" `shouldBe` Exists (Next (Prop "a"))
     it "parses eventually" $ do
       parseCTL "E (F a)" `shouldBe` Exists (transformEventually (Prop "a"))
     it "parses always" $ do
