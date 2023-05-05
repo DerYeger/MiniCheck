@@ -2,7 +2,7 @@ module TS.Parser (parseTS) where
 
 import Data.Set (fromList)
 import TS.Model
-import Text.Parsec (char, letter, many, newline, option, space, string, (<|>))
+import Text.Parsec (char, letter, many, newline, option, sepBy, space, string, (<|>))
 import Text.Parsec.String (Parser)
 import Utils (runParser)
 
@@ -28,18 +28,24 @@ arrow = string "->"
 listItemStart :: Parser String
 listItemStart = string "-"
 
-parseInit :: Parser Bool
-parseInit = do
-  _ <- string " (init)"
-  return True
+parseLabel :: Parser AtomicProposition
+parseLabel = do
+  name <- many letter
+  return (AtomicProposition name)
+
+parseLabels :: Parser [AtomicProposition]
+parseLabels = do
+  _ <- string ": "
+  parseLabel `sepBy` string ", "
 
 parseState :: Parser (State, Bool, [AtomicProposition])
 parseState = do
   _ <- listItemStart >> space
   name <- many letter
-  initial <- option False parseInit
+  initial <- option False (string " (init)" >> return True)
+  labels <- option [] parseLabels
   _ <- newline
-  return (State name, initial, [])
+  return (State name, initial, AtomicProposition name : labels)
 
 parseTransitions :: Parser [Transition]
 parseTransitions = do
