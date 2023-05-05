@@ -13,12 +13,13 @@ satState ts@(TS states _ _ _ _ labelingFunction) f = case f of
   Prop p -> fromList $ filter (\s -> AtomicProposition p `elem` labelingFunction s) (toList states)
   Conjunct left right -> satState ts left `intersection` satState ts right
   Negation inner -> states \\ satState ts inner
+  Exists inner -> satPath ts inner
   _ -> error "not yet implemented"
 
--- satPath :: TransitionSystem -> PathFormula -> Set State
--- satPath ts@(TS states _ _ _ _ labelingFunction) f = case f of
---   Next inner -> fromList $ concatMap (\s -> transition ts s (Action "")) (toList states)
---   Until left right -> error "not yet implemented"
+satPath :: TransitionSystem -> PathFormula -> Set State
+satPath ts@(TS states _ _ _ _ _) f = case f of
+  Next inner -> fromList $ filter (\s -> (post ts s `intersection` satState ts inner) /= empty) $ toList states
+  _ -> error "not yet implemented"
 
--- transition :: TransitionSystem -> State -> Action -> [State]
--- transition (TS _ _ transitions _ _ _) s a = map (\(T _ _ to) -> to) $ filter (\(T from action _) -> from == s && action == a) transitions
+post :: TransitionSystem -> State -> Set State
+post (TS _ _ transitions _ _ _) s = fromList $ map (\(T _ _ to) -> to) $ filter (\(T from _ _) -> from == s) transitions
