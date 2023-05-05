@@ -51,14 +51,14 @@ negation = do
 exists :: Parser StateFormula
 exists = do
   _ <- string "E "
-  (inner, negateOuter) <- pathFormula
-  return (if negateOuter then Negation (Exists inner) else Exists inner)
+  (inner, flipOuter) <- pathFormula
+  return (if flipOuter then Negation (ForAll inner) else Exists inner)
 
 forAll :: Parser StateFormula
 forAll = do
   _ <- string "A "
   (inner, negateOuter) <- pathFormula
-  return (if negateOuter then Negation (ForAll inner) else ForAll inner)
+  return (if negateOuter then Negation (Exists inner) else ForAll inner)
 
 pathFormula :: Parser (PathFormula, Bool)
 pathFormula = do

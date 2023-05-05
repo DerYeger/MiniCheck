@@ -15,8 +15,10 @@ satState ts@(TS states _ _ _ _ labelingFunction) f = case f of
   Negation inner -> states \\ satState ts inner
   _ -> error "not yet implemented"
 
--- Exists p -> evaluatePathFormula ts p s
--- ForAll p -> complement (evaluatePathFormula ts p s)
+-- satPath :: TransitionSystem -> PathFormula -> Set State
+-- satPath ts@(TS states _ _ _ _ labelingFunction) f = case f of
+--   Next inner -> fromList $ concatMap (\s -> transition ts s (Action "")) (toList states)
+--   Until left right -> error "not yet implemented"
 
-satPath :: TransitionSystem -> PathFormula -> State -> State -> Bool
-satPath _ _ _ _ = False
+-- transition :: TransitionSystem -> State -> Action -> [State]
+-- transition (TS _ _ transitions _ _ _) s a = map (\(T _ _ to) -> to) $ filter (\(T from action _) -> from == s && action == a) transitions

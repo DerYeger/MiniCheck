@@ -41,7 +41,7 @@ spec = do
     it "parses eventually" $ do
       parseCTL "E (F a)" `shouldBe` Exists (transformEventually (Prop "a"))
     it "parses always" $ do
-      parseCTL "A (G a)" `shouldBe` Negation (ForAll (transformAlways (Prop "a")))
+      parseCTL "A (F a)" `shouldBe` ForAll (Until (BoolLiteral True) (Prop "a"))
     it "parses until" $ do
       parseCTL "E (a U b)" `shouldBe` Exists (Until (Prop "a") (Prop "b"))
     it "derives exists eventually" $ do
@@ -49,6 +49,6 @@ spec = do
     it "derives forall eventually" $ do
       parseCTL "A (F a)" `shouldBe` ForAll (Until (BoolLiteral True) (Prop "a"))
     it "derives exists always" $ do
-      parseCTL "E (G a)" `shouldBe` Negation (Exists (Until (BoolLiteral True) (Negation (Prop "a"))))
+      parseCTL "E (G a)" `shouldBe` Negation (ForAll (Until (BoolLiteral True) (Negation (Prop "a"))))
     it "derives forall always" $ do
-      parseCTL "A (G a)" `shouldBe` Negation (ForAll (Until (BoolLiteral True) (Negation (Prop "a"))))
+      parseCTL "A (G a)" `shouldBe` Negation (Exists (Until (BoolLiteral True) (Negation (Prop "a"))))
