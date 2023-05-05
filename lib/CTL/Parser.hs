@@ -51,32 +51,37 @@ negation = do
 exists :: Parser StateFormula
 exists = do
   _ <- string "E "
-  Exists <$> pathFormula
+  (inner, negateOuter) <- pathFormula
+  return (if negateOuter then Negation (Exists inner) else Exists inner)
 
 forAll :: Parser StateFormula
 forAll = do
   _ <- string "A "
-  ForAll <$> pathFormula
+  (inner, negateOuter) <- pathFormula
+  return (if negateOuter then Negation (ForAll inner) else ForAll inner)
 
-pathFormula :: Parser PathFormula
+pathFormula :: Parser (PathFormula, Bool)
 pathFormula = do
   _ <- string "("
   inner <- choice [eventually, always, CTL.Parser.until]
   _ <- string ")"
   return inner
 
-eventually :: Parser PathFormula
+eventually :: Parser (PathFormula, Bool)
 eventually = do
   _ <- string "F "
-  transformEventually <$> stateFormula
+  inner <- stateFormula
+  return (transformEventually inner, False)
 
-always :: Parser PathFormula
+always :: Parser (PathFormula, Bool)
 always = do
   _ <- string "G "
-  Always <$> stateFormula
+  inner <- stateFormula
+  return (transformAlways inner, True)
 
-until :: Parser PathFormula
+until :: Parser (PathFormula, Bool)
 until = do
   left <- stateFormula
   _ <- string " U "
-  Until left <$> stateFormula
+  right <- stateFormula
+  return (Until left right, False)

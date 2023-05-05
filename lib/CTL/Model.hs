@@ -2,7 +2,7 @@ module CTL.Model where
 
 data StateFormula = BoolLiteral Bool | Prop String | Conjunct StateFormula StateFormula | Negation StateFormula | Exists PathFormula | ForAll PathFormula deriving (Show, Eq, Ord)
 
-data PathFormula = Always StateFormula | Until StateFormula StateFormula deriving (Show, Eq, Ord)
+data PathFormula = Until StateFormula StateFormula deriving (Show, Eq, Ord)
 
 transformDisjunction :: StateFormula -> StateFormula -> StateFormula
 transformDisjunction f1 f2 = Negation (Conjunct (Negation f1) (Negation f2))
@@ -18,3 +18,6 @@ transformXor f1 f2 = transformDisjunction (Conjunct f1 (Negation f2)) (Conjunct 
 
 transformEventually :: StateFormula -> PathFormula
 transformEventually = Until (BoolLiteral True)
+
+transformAlways :: StateFormula -> PathFormula
+transformAlways = transformEventually . Negation
