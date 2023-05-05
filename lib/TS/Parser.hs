@@ -18,9 +18,9 @@ ts = do
   let initialStates = map (\(state, _, _) -> state) $ filter (\(_, initial, _) -> initial) statesWithLabels
   let states = map (\(state, _, _) -> state) statesWithLabels
   let atomicPropositions = concatMap (\(_, _, labels) -> labels) statesWithLabels
-  let actions = map (\(_, action, _) -> action) transitions
+  let actions = map (\(T _ action _) -> action) transitions
   let labelingFunction _ = [] -- todo
-  return (fromList states, fromList actions, transitions, fromList initialStates, fromList atomicPropositions, labelingFunction)
+  return (TS (fromList states) (fromList actions) transitions (fromList initialStates) (fromList atomicPropositions) labelingFunction)
 
 arrow :: Parser String
 arrow = string "->"
@@ -63,4 +63,4 @@ parseTransition = do
   action <- actionName
   _ <- space >> arrow >> space
   to <- many letter
-  return (State from, Action action, State to)
+  return (T (State from) (Action action) (State to))
