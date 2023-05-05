@@ -68,7 +68,7 @@ pathFormula = do
 eventually :: Parser PathFormula
 eventually = do
   _ <- string "F "
-  Eventually <$> stateFormula
+  transformEventually <$> stateFormula
 
 always :: Parser PathFormula
 always = do

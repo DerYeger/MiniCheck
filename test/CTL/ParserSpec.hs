@@ -24,12 +24,12 @@ spec = do
     it "parses xor" $ do
       parseCTL "(a xor b)" `shouldBe` transformXor (Prop "a") (Prop "b")
     it "parses exists" $ do
-      parseCTL "E (F a)" `shouldBe` Exists (Eventually (Prop "a"))
+      parseCTL "E (F a)" `shouldBe` Exists (transformEventually (Prop "a"))
     it "parses forall" $ do
-      parseCTL "A (F a)" `shouldBe` ForAll (Eventually (Prop "a"))
+      parseCTL "A (F a)" `shouldBe` ForAll (transformEventually (Prop "a"))
   describe "path formula parser" $ do
     it "parses eventually" $ do
-      parseCTL "E (F a)" `shouldBe` Exists (Eventually (Prop "a"))
+      parseCTL "E (F a)" `shouldBe` Exists (transformEventually (Prop "a"))
     it "parses always" $ do
       parseCTL "A (G a)" `shouldBe` ForAll (Always (Prop "a"))
     it "parses until" $ do
