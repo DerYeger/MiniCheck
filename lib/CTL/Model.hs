@@ -8,7 +8,7 @@ transformDisjunction :: StateFormula -> StateFormula -> StateFormula
 transformDisjunction f1 f2 = Negation (Conjunct (Negation f1) (Negation f2))
 
 transformImplication :: StateFormula -> StateFormula -> StateFormula
-transformImplication f1 = Conjunct (Negation f1)
+transformImplication f1 = transformDisjunction (Negation f1)
 
 transformEquivalence :: StateFormula -> StateFormula -> StateFormula
 transformEquivalence f1 f2 = Conjunct (transformImplication f1 f2) (transformImplication f2 f1)

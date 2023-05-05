@@ -120,11 +120,11 @@ spec = describe "from examples" $ do
       evaluate ts formula `shouldBe` True
     it "evaluates an invalid eventually" $ do
       ts <- vendingMachine
-      let formula = parseCTL "E (F beer)"
+      let formula = parseCTL "E (G beer)"
       evaluate ts formula `shouldBe` False
     it "evaluates an always" $ do
       ts <- vendingMachine
-      let formula = parseCTL "A (G select)"
+      let formula = parseCTL "A (F select)"
       evaluate ts formula `shouldBe` True
     it "evaluates an invalid always" $ do
       ts <- vendingMachine

@@ -1,5 +1,7 @@
 module Main where
 
+import CTL.Parser (parseCTL)
+import Semantics (evaluate)
 import System.Environment (getArgs)
 import TS.Parser (parseTS)
 
@@ -9,5 +11,6 @@ main = do
   args <- getArgs
   tsFile <- readFile $ head args
   let ts = parseTS tsFile
-  print ts
+  let formula = parseCTL $ args !! 1
+  print $ evaluate ts formula
   return ()

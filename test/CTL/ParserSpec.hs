@@ -30,9 +30,9 @@ spec = do
     it "derives disjunction" $ do
       parseCTL "(a || b)" `shouldBe` Negation (Conjunct (Negation (Prop "a")) (Negation (Prop "b")))
     it "derives implication" $ do
-      parseCTL "(a -> b)" `shouldBe` Conjunct (Negation (Prop "a")) (Prop "b")
+      parseCTL "(a -> b)" `shouldBe` Negation (Conjunct (Negation (Negation (Prop "a"))) (Negation (Prop "b")))
     it "derives equivalence" $ do
-      parseCTL "(a <-> b)" `shouldBe` Conjunct (Conjunct (Negation (Prop "a")) (Prop "b")) (Conjunct (Negation (Prop "b")) (Prop "a"))
+      parseCTL "(a <-> b)" `shouldBe` Conjunct (Negation (Conjunct (Negation (Negation (Prop "a"))) (Negation (Prop "b")))) (Negation (Conjunct (Negation (Negation (Prop "b"))) (Negation (Prop "a"))))
     it "derives xor" $ do
       parseCTL "(a xor b)" `shouldBe` Negation (Conjunct (Negation (Conjunct (Prop "a") (Negation (Prop "b")))) (Negation (Conjunct (Prop "b") (Negation (Prop "a")))))
   describe "path formula parser" $ do
