@@ -31,10 +31,10 @@ parseOperator :: Parser (StateFormula -> StateFormula -> StateFormula)
 parseOperator = choice [conjunction, disjunction, implication, equivalence, xor]
   where
     conjunction = string "&&" >> return Conjunct
-    disjunction = string "||" >> return (\f1 f2 -> Negation (Conjunct (Negation f1) (Negation f2)))
-    implication = string "->" >> return (Conjunct . Negation)
-    equivalence = string "<->" >> return (\f1 f2 -> Conjunct (Conjunct (Negation f1) f2) (Conjunct (Negation f2) f1))
-    xor = string "xor" >> return (\f1 f2 -> Conjunct (Conjunct (Negation f1) f2) (Conjunct (Negation f2) f1))
+    disjunction = string "||" >> return transformDisjunction
+    implication = string "->" >> return transformImplication
+    equivalence = string "<->" >> return transformEquivalence
+    xor = string "xor" >> return transformXor
 
 prop :: Parser StateFormula
 prop = do

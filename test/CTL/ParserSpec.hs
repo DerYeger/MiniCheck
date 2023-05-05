@@ -16,13 +16,13 @@ spec = do
     it "parses conjunction" $ do
       parseCTL "(a && b)" `shouldBe` Conjunct (Prop "a") (Prop "b")
     it "parses disjunction" $ do
-      parseCTL "(a || b)" `shouldBe` Negation (Conjunct (Negation (Prop "a")) (Negation (Prop "b")))
+      parseCTL "(a || b)" `shouldBe` transformDisjunction (Prop "a") (Prop "b")
     it "parses implication" $ do
-      parseCTL "(a -> b)" `shouldBe` Conjunct (Negation (Prop "a")) (Prop "b")
+      parseCTL "(a -> b)" `shouldBe` transformImplication (Prop "a") (Prop "b")
     it "parses equivalence" $ do
-      parseCTL "(a <-> b)" `shouldBe` Conjunct (Conjunct (Negation (Prop "a")) (Prop "b")) (Conjunct (Negation (Prop "b")) (Prop "a"))
+      parseCTL "(a <-> b)" `shouldBe` transformEquivalence (Prop "a") (Prop "b")
     it "parses xor" $ do
-      parseCTL "(a xor b)" `shouldBe` Conjunct (Conjunct (Negation (Prop "a")) (Prop "b")) (Conjunct (Negation (Prop "b")) (Prop "a"))
+      parseCTL "(a xor b)" `shouldBe` transformXor (Prop "a") (Prop "b")
     it "parses exists" $ do
       parseCTL "E (F a)" `shouldBe` Exists (Eventually (Prop "a"))
     it "parses forall" $ do
