@@ -1,7 +1,7 @@
 module CTL.Parser (parseCTL) where
 
 import CTL.Model
-import Text.Parsec (choice, letter, many, string)
+import Text.Parsec (choice, letter, many, space, string, (<|>))
 import Text.Parsec.String (Parser)
 import Utils (runParser)
 
@@ -9,12 +9,32 @@ parseCTL :: String -> StateFormula
 parseCTL = runParser stateFormula
 
 stateFormula :: Parser StateFormula
-stateFormula = choice [negation, conjunction, booleanLiteral, prop, exists, forAll]
+stateFormula = choice [negation, binaryOperator, booleanLiteral, prop, exists, forAll]
 
 booleanLiteral :: Parser StateFormula
 booleanLiteral = do
   _ <- string "true"
   return (BoolLiteral True)
+
+binaryOperator :: Parser StateFormula
+binaryOperator = do
+  _ <- string "("
+  f1 <- stateFormula
+  _ <- space
+  operator <- parseOperator
+  _ <- space
+  f2 <- stateFormula
+  _ <- string ")"
+  return (operator f1 f2)
+
+parseOperator :: Parser (StateFormula -> StateFormula -> StateFormula)
+parseOperator = choice [conjunction, disjunction, implication, equivalence, xor]
+  where
+    conjunction = string "&&" >> return Conjunct
+    disjunction = string "||" >> return (\f1 f2 -> Negation (Conjunct (Negation f1) (Negation f2)))
+    implication = string "->" >> return (Conjunct . Negation)
+    equivalence = string "<->" >> return (\f1 f2 -> Conjunct (Conjunct (Negation f1) f2) (Conjunct (Negation f2) f1))
+    xor = string "xor" >> return (\f1 f2 -> Conjunct (Conjunct (Negation f1) f2) (Conjunct (Negation f2) f1))
 
 prop :: Parser StateFormula
 prop = do
@@ -27,15 +47,6 @@ negation = do
   inner <- stateFormula
   _ <- string ")"
   return (Negation inner)
-
-conjunction :: Parser StateFormula
-conjunction = do
-  _ <- string "("
-  f1 <- stateFormula
-  _ <- string " && "
-  f2 <- stateFormula
-  _ <- string ")"
-  return (Conjunct f1 f2)
 
 exists :: Parser StateFormula
 exists = do

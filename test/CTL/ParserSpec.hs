@@ -16,7 +16,7 @@ spec = do
     it "parses conjunction" $ do
       parseCTL "(a && b)" `shouldBe` Conjunct (Prop "a") (Prop "b")
     it "parses disjunction" $ do
-      parseCTL "(a || b)" `shouldBe` Conjunct (Prop "a") (Prop "b")
+      parseCTL "(a || b)" `shouldBe` Negation (Conjunct (Negation (Prop "a")) (Negation (Prop "b")))
     it "parses implication" $ do
       parseCTL "(a -> b)" `shouldBe` Conjunct (Negation (Prop "a")) (Prop "b")
     it "parses equivalence" $ do
