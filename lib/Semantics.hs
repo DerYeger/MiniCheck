@@ -1,7 +1,7 @@
 module Semantics (evaluate) where
 
 import CTL.Model
-import Data.Set (Set, empty, fromList, intersection, isSubsetOf, toList, (\\))
+import Data.Set (Set, empty, fromList, intersection, isSubsetOf, toList, union, (\\))
 import TS.Model
 
 evaluate :: TransitionSystem -> StateFormula -> Bool
@@ -17,9 +17,18 @@ satState ts@(TS states _ _ _ _ labelingFunction) f = case f of
   _ -> error "not yet implemented"
 
 satPath :: TransitionSystem -> PathFormula -> Set State
-satPath ts@(TS states _ _ _ _ _) f = case f of
-  Next inner -> fromList $ filter (\s -> (post ts s `intersection` satState ts inner) /= empty) $ toList states
-  _ -> error "not yet implemented"
+satPath ts@(TS states _ _ _ _ _) (Next inner) = fSet (\s -> (post ts s `intersection` satState ts inner) /= empty) states
+satPath ts (Until left right) = smallestSet satRight
+  where
+    satRight = satState ts right
+    satLeft = satState ts left
+    smallestSet t = if candidates /= empty then smallestSet (t `union` candidates) else t
+      where
+        candidates :: Set State
+        candidates = fSet (\s -> (post ts s `intersection` t) /= empty) (satLeft \\ t)
 
 post :: TransitionSystem -> State -> Set State
 post (TS _ _ transitions _ _ _) s = fromList $ map (\(T _ _ to) -> to) $ filter (\(T from _ _) -> from == s) transitions
+
+fSet :: Ord a => (a -> Bool) -> Set a -> Set a
+fSet f = fromList . filter f . toList
