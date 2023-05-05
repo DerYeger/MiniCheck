@@ -1,4 +1,4 @@
-module CTL.ParserSpec where
+module CTL.ParserSpec (spec) where
 
 import CTL.Model
 import CTL.Parser

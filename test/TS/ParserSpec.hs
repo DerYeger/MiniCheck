@@ -1,4 +1,4 @@
-module TS.ParserSpec where
+module TS.ParserSpec (spec) where
 
 import Data.Set (fromList)
 import TS.Model

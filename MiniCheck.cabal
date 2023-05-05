@@ -74,6 +74,7 @@ library
     exposed-modules:
         CTL.Model,
         CTL.Parser,
+        Semantics,
         TS.Model,
         TS.Parser
     other-modules:
@@ -89,4 +90,5 @@ test-suite MiniCheck-test
                     hspec ^>= 2.11.0.1
   other-modules:
         CTL.ParserSpec,
+        SemanticsSpec,
         TS.ParserSpec,
