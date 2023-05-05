@@ -2,7 +2,7 @@ module TS.Parser (parseTS) where
 
 import Data.Set (fromList)
 import TS.Model
-import Text.Parsec (char, letter, many, newline, option, sepBy, space, string, (<|>))
+import Text.Parsec (char, endBy, letter, many, newline, option, sepBy, space, string, (<|>))
 import Text.Parsec.String (Parser)
 import Utils (runParser)
 
@@ -12,7 +12,7 @@ parseTS = runParser ts
 ts :: Parser TransitionSystem
 ts = do
   _ <- string "States:" >> newline
-  statesWithLabels <- many parseState
+  statesWithLabels <- parseState `endBy` newline
   _ <- newline
   transitions <- parseTransitions
   let initialStates = map (\(state, _, _) -> state) $ filter (\(_, initial, _) -> initial) statesWithLabels
@@ -44,13 +44,12 @@ parseState = do
   name <- many letter
   initial <- option False (string " (init)" >> return True)
   labels <- option [] parseLabels
-  _ <- newline
   return (State name, initial, AtomicProposition name : labels)
 
 parseTransitions :: Parser [Transition]
 parseTransitions = do
   _ <- string "Transitions:" >> newline
-  many parseTransition
+  parseTransition `endBy` newline
 
 actionName :: Parser String
 actionName = do
@@ -64,5 +63,4 @@ parseTransition = do
   action <- actionName
   _ <- space >> arrow >> space
   to <- many letter
-  _ <- newline
   return (State from, Action action, State to)
