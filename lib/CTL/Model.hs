@@ -2,6 +2,6 @@ module CTL.Model where
 
 import TS.Model (AtomicProposition)
 
-data StateFormula = TrueLiteral | Prop AtomicProposition | Conjunct StateFormula StateFormula | Negation StateFormula | Exists PathFormula | ForAll PathFormula
+data StateFormula = BoolLiteral Bool | Prop AtomicProposition | Conjunct StateFormula StateFormula | Negation StateFormula | Exists PathFormula | ForAll PathFormula deriving (Show, Eq, Ord)
 
-data PathFormula = Eventually StateFormula | Always StateFormula | Until StateFormula StateFormula
+data PathFormula = Eventually StateFormula | Always StateFormula | Until StateFormula StateFormula deriving (Show, Eq, Ord)

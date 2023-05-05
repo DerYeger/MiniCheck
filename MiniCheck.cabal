@@ -56,7 +56,7 @@ extra-doc-files:    CHANGELOG.md
 
 common deps
   ghc-options: -Wall
-  build-depends:    base ^>=4.16.4.0,
+  build-depends:    base ^>= 4.16.4.0,
                     parsec ^>= 3.1.16.1,
                     containers ^>= 0.6.7
 
@@ -65,7 +65,7 @@ executable MiniCheck
     main-is:          Main.hs
     hs-source-dirs:   app
     default-language: Haskell2010
-    build-depends: MiniCheck
+    build-depends:    MiniCheck
 
 library
     import:           deps
@@ -73,7 +73,17 @@ library
     default-language: Haskell2010
     exposed-modules:
         CTL.Model,
+        CTL.Parser,
         TS.Model,
         TS.Parser
     other-modules:
         Utils
+
+test-suite MiniCheck-test
+  import: deps
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  hs-source-dirs:   test
+  default-language: Haskell2010
+  build-depends:    MiniCheck,
+                    hspec ^>= 2.11.0.1
