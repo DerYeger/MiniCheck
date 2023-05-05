@@ -23,10 +23,14 @@ spec = do
       parseCTL "(a <-> b)" `shouldBe` Conjunct (Conjunct (Negation (Prop "a")) (Prop "b")) (Conjunct (Negation (Prop "b")) (Prop "a"))
     it "parses xor" $ do
       parseCTL "(a xor b)" `shouldBe` Conjunct (Conjunct (Negation (Prop "a")) (Prop "b")) (Conjunct (Negation (Prop "b")) (Prop "a"))
+    it "parses exists" $ do
+      parseCTL "E (F a)" `shouldBe` Exists (Eventually (Prop "a"))
+    it "parses forall" $ do
+      parseCTL "A (F a)" `shouldBe` ForAll (Eventually (Prop "a"))
   describe "path formula parser" $ do
     it "parses eventually" $ do
-      parseCTL "E F a" `shouldBe` Exists (Eventually (Prop "a"))
+      parseCTL "E (F a)" `shouldBe` Exists (Eventually (Prop "a"))
     it "parses always" $ do
-      parseCTL "A G a" `shouldBe` ForAll (Always (Prop "a"))
+      parseCTL "A (G a)" `shouldBe` ForAll (Always (Prop "a"))
     it "parses until" $ do
       parseCTL "E (a U b)" `shouldBe` Exists (Until (Prop "a") (Prop "b"))

@@ -1,7 +1,7 @@
 module CTL.Parser (parseCTL) where
 
 import CTL.Model
-import Text.Parsec (choice, letter, many, space, string, (<|>))
+import Text.Parsec (choice, letter, many, space, string)
 import Text.Parsec.String (Parser)
 import Utils (runParser)
 
@@ -9,7 +9,7 @@ parseCTL :: String -> StateFormula
 parseCTL = runParser stateFormula
 
 stateFormula :: Parser StateFormula
-stateFormula = choice [negation, binaryOperator, booleanLiteral, prop, exists, forAll]
+stateFormula = choice [exists, forAll, negation, binaryOperator, booleanLiteral, prop]
 
 booleanLiteral :: Parser StateFormula
 booleanLiteral = do
@@ -19,13 +19,13 @@ booleanLiteral = do
 binaryOperator :: Parser StateFormula
 binaryOperator = do
   _ <- string "("
-  f1 <- stateFormula
+  left <- stateFormula
   _ <- space
   operator <- parseOperator
   _ <- space
-  f2 <- stateFormula
+  right <- stateFormula
   _ <- string ")"
-  return (operator f1 f2)
+  return (operator left right)
 
 parseOperator :: Parser (StateFormula -> StateFormula -> StateFormula)
 parseOperator = choice [conjunction, disjunction, implication, equivalence, xor]
@@ -50,35 +50,33 @@ negation = do
 
 exists :: Parser StateFormula
 exists = do
-  _ <- string "E"
-  _ <- string " "
+  _ <- string "E "
   Exists <$> pathFormula
 
 forAll :: Parser StateFormula
 forAll = do
-  _ <- string "A"
-  _ <- string " "
+  _ <- string "A "
   ForAll <$> pathFormula
 
 pathFormula :: Parser PathFormula
-pathFormula = choice [eventually, always, CTL.Parser.until]
+pathFormula = do
+  _ <- string "("
+  inner <- choice [eventually, always, CTL.Parser.until]
+  _ <- string ")"
+  return inner
 
 eventually :: Parser PathFormula
 eventually = do
-  _ <- string "F"
-  _ <- string " "
+  _ <- string "F "
   Eventually <$> stateFormula
 
 always :: Parser PathFormula
 always = do
-  _ <- string "G"
-  _ <- string " "
+  _ <- string "G "
   Always <$> stateFormula
 
 until :: Parser PathFormula
 until = do
-  f1 <- stateFormula
-  _ <- string " "
-  _ <- string "U"
-  _ <- string " "
-  Until f1 <$> stateFormula
+  left <- stateFormula
+  _ <- string " U "
+  Until left <$> stateFormula
