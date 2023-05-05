@@ -9,7 +9,7 @@ parseCTL :: String -> StateFormula
 parseCTL = runParser stateFormula
 
 stateFormula :: Parser StateFormula
-stateFormula = choice [booleanLiteral, prop, exists, forAll]
+stateFormula = choice [negation, booleanLiteral, prop, exists, forAll]
 
 booleanLiteral :: Parser StateFormula
 booleanLiteral = do
@@ -20,6 +20,13 @@ prop :: Parser StateFormula
 prop = do
   p <- many letter
   return (Prop p)
+
+negation :: Parser StateFormula
+negation = do
+  _ <- string "!("
+  inner <- stateFormula
+  _ <- string ")"
+  return (Negation inner)
 
 exists :: Parser StateFormula
 exists = do

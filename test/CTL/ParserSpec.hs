@@ -12,7 +12,7 @@ spec = do
     it "parses atomic proposition" $ do
       parseCTL "a" `shouldBe` Prop "a"
     it "parses negation" $ do
-      parseCTL "(!a)" `shouldBe` Negation (Prop "a")
+      parseCTL "!(a)" `shouldBe` Negation (Prop "a")
     it "parses conjunction" $ do
       parseCTL "(a && b)" `shouldBe` Conjunct (Prop "a") (Prop "b")
     it "parses disjunction" $ do
