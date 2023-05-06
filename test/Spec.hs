@@ -1,6 +1,6 @@
 import qualified CTL.ParserSpec
-import qualified TS.ParserSpec
 import qualified SemanticsSpec
+import qualified TS.ParserSpec
 import Test.Hspec
 
 main :: IO ()

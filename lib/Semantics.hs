@@ -14,7 +14,9 @@ satState ts@(TS states _ _ _ _ labelingFunction) f = case f of
   Conjunct left right -> satState ts left `intersection` satState ts right
   Negation inner -> states \\ satState ts inner
   Exists inner -> satPath ts inner
-  _ -> error "not yet implemented"
+  ForAll (Next inner) -> satState ts (Negation (Exists (Next (Negation inner))))
+  ForAll (Until left right) -> satState ts (Conjunct (Negation (Exists (Until (Negation right) (Conjunct (Negation left) (Negation right))))) (Negation (Exists (Always (Negation right)))))
+  _ -> error "Unsupported state formula"
 
 satPath :: TransitionSystem -> PathFormula -> Set State
 satPath ts@(TS states _ _ _ _ _) (Next inner) = fSet (\s -> (post ts s `intersection` satState ts inner) /= empty) states
@@ -24,8 +26,13 @@ satPath ts (Until left right) = smallestSet satRight
     satLeft = satState ts left
     smallestSet t = if candidates /= empty then smallestSet (t `union` candidates) else t
       where
-        candidates :: Set State
         candidates = fSet (\s -> (post ts s `intersection` t) /= empty) (satLeft \\ t)
+satPath ts (Always inner) = largestSet satInner
+  where
+    satInner = satState ts inner
+    largestSet t = if candidates /= empty then t \\ candidates else t
+      where
+        candidates = fSet (\s -> (post ts s `intersection` t) == empty) t
 
 post :: TransitionSystem -> State -> Set State
 post (TS _ _ transitions _ _ _) s = fromList $ map (\(T _ _ to) -> to) $ filter (\(T from _ _) -> from == s) transitions
