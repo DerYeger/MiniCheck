@@ -27,6 +27,19 @@ spec = describe "bounded ltl model checking" $ do
       ts <- vendingMachine
       let path = [State "pay", State "select", State "beer", State "pay"]
       trace ts path `shouldBe` [[AtomicProposition "pay"], [AtomicProposition "select"], [AtomicProposition "beer"], [AtomicProposition "pay"]]
+  describe "the examples" $ do
+    it "always eventually pay" $ do
+      ts <- vendingMachine
+      let formula = "(F pay)"
+      doEvaluate ts formula `shouldBe` Right True
+    it "exists eventually soda" $ do
+      ts <- vendingMachine
+      let formula = "(F soda)"
+      doEvaluate ts formula `shouldBe` Right False
+    it "exists always selection followed by soda" $ do
+      ts <- vendingMachine
+      let formula = "(G (select -> (X soda)))"
+      doEvaluate ts formula `shouldBe` Right False
   describe "the algorithm" $ do
     it "evaluates a boolean literal" $ do
       ts <- vendingMachine
