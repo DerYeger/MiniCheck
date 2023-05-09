@@ -75,10 +75,11 @@ library
         CTL.Model,
         CTL.Parser,
         CTL.Validator,
+        CTL.Semantics,
         LTL.Model,
         LTL.Parser,
+        LTL.Semantics,
         LTL.Validator,
-        Semantics,
         TS.Model,
         TS.Parser,
         TS.Validator
@@ -95,6 +96,7 @@ test-suite MiniCheck-test
                     hspec ^>= 2.11.0.1
   other-modules:
         CTL.ParserSpec,
+        CTL.SemanticsSpec,
         LTL.ParserSpec,
-        SemanticsSpec,
+        LTL.SemanticsSpec,
         TS.ParserSpec,

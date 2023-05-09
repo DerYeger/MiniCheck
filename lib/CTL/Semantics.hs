@@ -1,12 +1,12 @@
-module CTL.Semantics (evaluate) where
+module CTL.Semantics (evaluateCTL) where
 
 import CTL.Model
 import Data.Set (Set, empty, fromList, intersection, isSubsetOf, toList, union, (\\))
 import TS.Model
 import Utils (fSet)
 
-evaluate :: TransitionSystem -> StateFormula -> Bool
-evaluate ts@(TS _ _ _ initialStates _ _) f = initialStates `isSubsetOf` satState ts f
+evaluateCTL :: TransitionSystem -> StateFormula -> Bool
+evaluateCTL ts@(TS _ _ _ initialStates _ _) f = initialStates `isSubsetOf` satState ts f
 
 satState :: TransitionSystem -> StateFormula -> Set State
 satState ts@(TS states _ _ _ _ labelingFunction) f = case f of

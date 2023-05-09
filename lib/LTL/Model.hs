@@ -1,6 +1,6 @@
 module LTL.Model where
 
-data Formula = BoolLiteral Bool | Prop String | Conjunct Formula Formula | Negation Formula | Next Formula | Until Formula Formula deriving (Show, Eq, Ord)
+data Formula = BoolLiteral Bool | Prop String | Conjunct Formula Formula | Negation Formula | Next Formula | Always Formula | Until Formula Formula deriving (Show, Eq, Ord)
 
 transformDisjunction :: Formula -> Formula -> Formula
 transformDisjunction f1 f2 = Negation (Conjunct (Negation f1) (Negation f2))

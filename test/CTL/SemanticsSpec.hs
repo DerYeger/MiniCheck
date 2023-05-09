@@ -1,7 +1,7 @@
-module SemanticsSpec (spec) where
+module CTL.SemanticsSpec (spec) where
 
 import CTL.Parser (parseCTL)
-import Semantics (evaluate)
+import CTL.Semantics (evaluateCTL)
 import TS.Model
 import TS.Parser (parseTS)
 import Test.Hspec (Spec, describe, it, shouldBe)
@@ -15,7 +15,7 @@ doEvaluate :: Either String TransitionSystem -> String -> Either String Bool
 doEvaluate ts formula = do
   ts' <- ts
   f <- parseCTL formula
-  return $ evaluate ts' f
+  return $ evaluateCTL ts' f
 
 spec :: Spec
 spec = describe "from examples" $ do

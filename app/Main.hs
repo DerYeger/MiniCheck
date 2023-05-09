@@ -2,8 +2,11 @@ module Main where
 
 import CTL.Model (StateFormula)
 import CTL.Parser (parseCTL)
+import CTL.Semantics (evaluateCTL)
 import CTL.Validator (validateCTL)
-import Semantics (evaluate)
+import LTL.Parser (parseLTL)
+import LTL.Semantics (evaluateLTL)
+import LTL.Validator (validateLTL)
 import System.Environment (getArgs)
 import TS.Model (TransitionSystem)
 import TS.Parser (parseTS)
@@ -19,7 +22,13 @@ runWithCTL :: String -> String -> Either String Bool
 runWithCTL tsFile formula = do
   ts <- parseTS tsFile >>= validateTS
   f <- parseCTL formula >>= validateCTL ts
-  return $ evaluate ts f
+  return $ evaluateCTL ts f
+
+runWithLTL :: String -> String -> Either String Bool
+runWithLTL tsFile formula = do
+  ts <- parseTS tsFile >>= validateTS
+  f <- parseLTL formula >>= validateLTL ts
+  return $ evaluateLTL ts f
 
 main :: IO ()
 main = do
