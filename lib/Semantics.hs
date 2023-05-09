@@ -3,6 +3,7 @@ module Semantics (evaluate) where
 import CTL.Model
 import Data.Set (Set, empty, fromList, intersection, isSubsetOf, toList, union, (\\))
 import TS.Model
+import Utils (fSet)
 
 evaluate :: TransitionSystem -> StateFormula -> Bool
 evaluate ts@(TS _ _ _ initialStates _ _) f = initialStates `isSubsetOf` satState ts f
@@ -36,6 +37,3 @@ satPath ts (Always inner) = largestSet satInner
 
 post :: TransitionSystem -> State -> Set State
 post (TS _ _ transitions _ _ _) s = fromList $ map (\(T _ _ to) -> to) $ filter (\(T from _ _) -> from == s) transitions
-
-fSet :: Ord a => (a -> Bool) -> Set a -> Set a
-fSet f = fromList . filter f . toList

@@ -5,7 +5,7 @@ import Text.Parsec (choice, letter, many, space, string)
 import Text.Parsec.String (Parser)
 import Utils (runParser)
 
-parseCTL :: String -> StateFormula
+parseCTL :: String -> Either String StateFormula
 parseCTL = runParser stateFormula
 
 stateFormula :: Parser StateFormula

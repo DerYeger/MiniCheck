@@ -25,4 +25,4 @@ spec = describe "the parser" $ do
   it "parses the example" $ do
     file <- readFile "examples/vending-machine.txt"
     let ts = parseTS file
-    ts `shouldBe` vendingMachine
+    ts `shouldBe` Right vendingMachine

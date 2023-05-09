@@ -1,5 +1,6 @@
-module Utils (runParser) where
+module Utils (runParser, fSet) where
 
+import Data.Set (Set, fromList, toList)
 import Text.Parsec (eof, parse)
 import Text.Parsec.String (Parser)
 
@@ -9,7 +10,10 @@ withEof p = do
   eof
   return result
 
-runParser :: Parser a -> String -> a
-runParser p str = case parse (withEof p) "" str of
-  Left err -> error $ "parse error at " ++ show err
-  Right val -> val
+runParser :: Parser a -> String -> Either String a
+runParser p s = case parse (withEof p) "" s of
+  Left err -> Left (show err)
+  Right result -> Right result
+
+fSet :: Ord a => (a -> Bool) -> Set a -> Set a
+fSet f = fromList . filter f . toList

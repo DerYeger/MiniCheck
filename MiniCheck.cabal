@@ -76,7 +76,8 @@ library
         CTL.Parser,
         Semantics,
         TS.Model,
-        TS.Parser
+        TS.Parser,
+        Validator
     other-modules:
         Utils
 

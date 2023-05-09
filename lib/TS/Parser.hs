@@ -7,7 +7,7 @@ import Text.Parsec (char, endBy, letter, many, newline, option, sepBy, space, st
 import Text.Parsec.String (Parser)
 import Utils (runParser)
 
-parseTS :: String -> TransitionSystem
+parseTS :: String -> Either String TransitionSystem
 parseTS = runParser ts
 
 ts :: Parser TransitionSystem

@@ -8,47 +8,47 @@ spec :: Spec
 spec = do
   describe "state formula parser" $ do
     it "parses true" $ do
-      parseCTL "true" `shouldBe` BoolLiteral True
+      parseCTL "true" `shouldBe` Right (BoolLiteral True)
     it "parses atomic proposition" $ do
-      parseCTL "a" `shouldBe` Prop "a"
+      parseCTL "a" `shouldBe` Right (Prop "a")
     it "parses negation" $ do
-      parseCTL "!(a)" `shouldBe` Negation (Prop "a")
+      parseCTL "!(a)" `shouldBe` Right (Negation (Prop "a"))
     it "parses conjunction" $ do
-      parseCTL "(a && b)" `shouldBe` Conjunct (Prop "a") (Prop "b")
+      parseCTL "(a && b)" `shouldBe` Right (Conjunct (Prop "a") (Prop "b"))
     it "parses disjunction" $ do
-      parseCTL "(a || b)" `shouldBe` transformDisjunction (Prop "a") (Prop "b")
+      parseCTL "(a || b)" `shouldBe` Right (transformDisjunction (Prop "a") (Prop "b"))
     it "parses implication" $ do
-      parseCTL "(a -> b)" `shouldBe` transformImplication (Prop "a") (Prop "b")
+      parseCTL "(a -> b)" `shouldBe` Right (transformImplication (Prop "a") (Prop "b"))
     it "parses equivalence" $ do
-      parseCTL "(a <-> b)" `shouldBe` transformEquivalence (Prop "a") (Prop "b")
+      parseCTL "(a <-> b)" `shouldBe` Right (transformEquivalence (Prop "a") (Prop "b"))
     it "parses xor" $ do
-      parseCTL "(a xor b)" `shouldBe` transformXor (Prop "a") (Prop "b")
+      parseCTL "(a xor b)" `shouldBe` Right (transformXor (Prop "a") (Prop "b"))
     it "parses exists" $ do
-      parseCTL "E (F a)" `shouldBe` Exists (transformEventually (Prop "a"))
+      parseCTL "E (F a)" `shouldBe` Right (Exists (transformEventually (Prop "a")))
     it "parses forall" $ do
-      parseCTL "A (F a)" `shouldBe` ForAll (transformEventually (Prop "a"))
+      parseCTL "A (F a)" `shouldBe` Right (ForAll (transformEventually (Prop "a")))
     it "derives disjunction" $ do
-      parseCTL "(a || b)" `shouldBe` Negation (Conjunct (Negation (Prop "a")) (Negation (Prop "b")))
+      parseCTL "(a || b)" `shouldBe` Right (Negation (Conjunct (Negation (Prop "a")) (Negation (Prop "b"))))
     it "derives implication" $ do
-      parseCTL "(a -> b)" `shouldBe` Negation (Conjunct (Negation (Negation (Prop "a"))) (Negation (Prop "b")))
+      parseCTL "(a -> b)" `shouldBe` Right (Negation (Conjunct (Negation (Negation (Prop "a"))) (Negation (Prop "b"))))
     it "derives equivalence" $ do
-      parseCTL "(a <-> b)" `shouldBe` Conjunct (Negation (Conjunct (Negation (Negation (Prop "a"))) (Negation (Prop "b")))) (Negation (Conjunct (Negation (Negation (Prop "b"))) (Negation (Prop "a"))))
+      parseCTL "(a <-> b)" `shouldBe` Right (Conjunct (Negation (Conjunct (Negation (Negation (Prop "a"))) (Negation (Prop "b")))) (Negation (Conjunct (Negation (Negation (Prop "b"))) (Negation (Prop "a")))))
     it "derives xor" $ do
-      parseCTL "(a xor b)" `shouldBe` Negation (Conjunct (Negation (Conjunct (Prop "a") (Negation (Prop "b")))) (Negation (Conjunct (Prop "b") (Negation (Prop "a")))))
+      parseCTL "(a xor b)" `shouldBe` Right (Negation (Conjunct (Negation (Conjunct (Prop "a") (Negation (Prop "b")))) (Negation (Conjunct (Prop "b") (Negation (Prop "a"))))))
   describe "path formula parser" $ do
     it "parses next" $ do
-      parseCTL "E (X a)" `shouldBe` Exists (Next (Prop "a"))
+      parseCTL "E (X a)" `shouldBe` Right (Exists (Next (Prop "a")))
     it "parses eventually" $ do
-      parseCTL "E (F a)" `shouldBe` Exists (transformEventually (Prop "a"))
+      parseCTL "E (F a)" `shouldBe` Right (Exists (transformEventually (Prop "a")))
     it "parses always" $ do
-      parseCTL "A (F a)" `shouldBe` ForAll (Until (BoolLiteral True) (Prop "a"))
+      parseCTL "A (F a)" `shouldBe` Right (ForAll (Until (BoolLiteral True) (Prop "a")))
     it "parses until" $ do
-      parseCTL "E (a U b)" `shouldBe` Exists (Until (Prop "a") (Prop "b"))
+      parseCTL "E (a U b)" `shouldBe` Right (Exists (Until (Prop "a") (Prop "b")))
     it "derives exists eventually" $ do
-      parseCTL "E (F a)" `shouldBe` Exists (Until (BoolLiteral True) (Prop "a"))
+      parseCTL "E (F a)" `shouldBe` Right (Exists (Until (BoolLiteral True) (Prop "a")))
     it "derives forall eventually" $ do
-      parseCTL "A (F a)" `shouldBe` ForAll (Until (BoolLiteral True) (Prop "a"))
+      parseCTL "A (F a)" `shouldBe` Right (ForAll (Until (BoolLiteral True) (Prop "a")))
     it "derives exists always" $ do
-      parseCTL "E (G a)" `shouldBe` Negation (ForAll (Until (BoolLiteral True) (Negation (Prop "a"))))
+      parseCTL "E (G a)" `shouldBe` Right (Negation (ForAll (Until (BoolLiteral True) (Negation (Prop "a")))))
     it "derives forall always" $ do
-      parseCTL "A (G a)" `shouldBe` Negation (Exists (Until (BoolLiteral True) (Negation (Prop "a"))))
+      parseCTL "A (G a)" `shouldBe` Right (Negation (Exists (Until (BoolLiteral True) (Negation (Prop "a")))))
