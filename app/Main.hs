@@ -1,5 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE NamedFieldPuns #-}
+{-# OPTIONS_GHC -Wno-missing-fields #-}
+{-# OPTIONS_GHC -fno-cse #-}
 
 module Main where
 
@@ -37,16 +39,14 @@ tsValidatorArgs =
 ctlModelCheckerArgs :: MiniCheck
 ctlModelCheckerArgs =
   CTL
-    { tsFile = def &= typ "TS_FILE" &= argPos 1,
-      formula = def &= typ "CTL_FORMULA" &= argPos 2
+    { formula = def &= typ "CTL_FORMULA" &= argPos 1
     }
 
 ltlModelCheckerArgs :: MiniCheck
 ltlModelCheckerArgs =
   LTL
-    { tsFile = def &= typ "TS_FILE" &= argPos 3,
-      formula = def &= typ "LTL_FORMULA" &= argPos 4,
-      steps = def &= typ "NATURAL_NUMBER" &= argPos 5
+    { formula = def &= typ "LTL_FORMULA" &= argPos 1,
+      steps = def &= typ "BOUND" &= argPos 2
     }
 
 runWithCTL :: String -> String -> Either String Bool
@@ -61,9 +61,12 @@ runWithLTL k t f = do
   f' <- parseLTL f >>= validateLTL ts'
   return $ evaluateLTL ts' f' k
 
+getCmdArgs :: Mode (CmdArgs MiniCheck)
+getCmdArgs = cmdArgsMode $ modes [tsValidatorArgs, ctlModelCheckerArgs, ltlModelCheckerArgs]
+
 main :: IO ()
 main = do
-  args <- cmdArgs $ modes [ctlModelCheckerArgs, ltlModelCheckerArgs, tsValidatorArgs]
+  args <- cmdArgsRun getCmdArgs
   tsRaw <- readFile $ tsFile args
   case args of
     Validate {} -> do
@@ -77,12 +80,15 @@ main = do
       let result = runWithCTL tsRaw formula
       case result of
         Left err -> putStrLn err
-        Right True -> putStrLn "The CTL formula holds."
-        Right False -> putStrLn "The CTL formula does not hold."
+        Right True -> putStrLn "The CTL formula is satisfied."
+        Right False -> putStrLn "The CTL formula is not satisfied."
     LTL {formula, steps} -> do
-      let result = runWithLTL steps tsRaw formula
-      case result of
-        Left err -> putStrLn err
-        Right True -> putStrLn "The LTL formula holds."
-        Right False -> putStrLn "The LTL formula does not hold."
+      if steps < 1
+        then putStrLn "The bound must be a positive integer."
+        else do
+          let result = runWithLTL steps tsRaw formula
+          case result of
+            Left err -> putStrLn err
+            Right True -> putStrLn "The LTL formula is satisfied."
+            Right False -> putStrLn "The LTL formula is not satisfied."
   return ()
