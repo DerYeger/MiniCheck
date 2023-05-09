@@ -1,146 +1,122 @@
 module LTL.SemanticsSpec (spec) where
 
-import CTL.Parser (parseCTL)
-import CTL.Semantics (evaluateCTL)
+import Data.Either (fromRight)
+import LTL.Parser (parseLTL)
+import LTL.Semantics (boundedPaths, evaluateLTL, trace)
 import TS.Model
 import TS.Parser (parseTS)
 import Test.Hspec (Spec, describe, it, shouldBe)
 
-vendingMachine :: IO (Either String TransitionSystem)
+vendingMachine :: IO TransitionSystem
 vendingMachine = do
   file <- readFile "examples/vending-machine.txt"
-  return $ parseTS file
+  return $ fromRight (error "unwrap failed") (parseTS file)
 
-doEvaluate :: Either String TransitionSystem -> String -> Either String Bool
+doEvaluate :: TransitionSystem -> String -> Either String Bool
 doEvaluate ts formula = do
-  ts' <- ts
-  f <- parseCTL formula
-  return $ evaluateCTL ts' f
+  f <- parseLTL formula
+  return $ evaluateLTL ts f 4
 
 spec :: Spec
-spec = describe "from examples" $ do
-  it "always eventually pay" $ do
-    ts <- vendingMachine
-    let formula = "A (F pay)"
-    doEvaluate ts formula `shouldBe` Right True
-  it "exists eventually soda" $ do
-    ts <- vendingMachine
-    let formula = "E (F soda)"
-    doEvaluate ts formula `shouldBe` Right True
-  it "exists always selection followed by soda" $ do
-    ts <- vendingMachine
-    let formula = "E (G (select -> A (X soda)))"
-    doEvaluate ts formula `shouldBe` Right True
-  it "always eventually soda" $ do
-    ts <- vendingMachine
-    let formula = "A (F soda)"
-    doEvaluate ts formula `shouldBe` Right False
-  describe "the basics" $ do
-    it "doEvaluates a boolean literal" $ do
+spec = describe "bounded ltl model checking" $ do
+  describe "the internals" $ do
+    it "computes bounded paths from initial states" $ do
+      ts <- vendingMachine
+      boundedPaths ts 4 `shouldBe` [[State "pay", State "select", State "beer", State "pay"], [State "pay", State "select", State "soda", State "pay"]]
+    it "computes traces from paths" $ do
+      ts <- vendingMachine
+      let path = [State "pay", State "select", State "beer", State "pay"]
+      trace ts path `shouldBe` [[AtomicProposition "pay"], [AtomicProposition "select"], [AtomicProposition "beer"], [AtomicProposition "pay"]]
+  describe "the algorithm" $ do
+    it "evaluates a boolean literal" $ do
       ts <- vendingMachine
       let formula = "true"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates a proposition" $ do
+    it "evaluates a proposition" $ do
       ts <- vendingMachine
       let formula = "pay"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid proposition" $ do
+    it "evaluates an invalid proposition" $ do
       ts <- vendingMachine
       let formula = "beer"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates a negation" $ do
+    it "evaluates a negation" $ do
       ts <- vendingMachine
       let formula = "!(beer)"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid negation" $ do
+    it "evaluates an invalid negation" $ do
       ts <- vendingMachine
       let formula = "!(pay)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates a conjunction" $ do
+    it "evaluates a conjunction" $ do
       ts <- vendingMachine
       let formula = "(pay && !(select))"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid conjunction" $ do
+    it "evaluates an invalid conjunction" $ do
       ts <- vendingMachine
       let formula = "(pay && select)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates a disjunction" $ do
+    it "evaluates a disjunction" $ do
       ts <- vendingMachine
       let formula = "(pay || select)"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid conjunction" $ do
+    it "evaluates an invalid conjunction" $ do
       ts <- vendingMachine
       let formula = "(beer || select)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates an implication" $ do
+    it "evaluates an implication" $ do
       ts <- vendingMachine
       let formula = "(true -> pay)"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid implication" $ do
+    it "evaluates an invalid implication" $ do
       ts <- vendingMachine
       let formula = "(pay -> select)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates an equivalence" $ do
+    it "evaluates an equivalence" $ do
       ts <- vendingMachine
       let formula = "(pay <-> true)"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid equivalence" $ do
+    it "evaluates an invalid equivalence" $ do
       ts <- vendingMachine
       let formula = "(pay <-> select)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates a xor" $ do
+    it "evaluates a xor" $ do
       ts <- vendingMachine
       let formula = "(pay xor select)"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid xor" $ do
+    it "evaluates an invalid xor" $ do
       ts <- vendingMachine
       let formula = "(pay xor true)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates an existential quantifier" $ do
+    it "evaluates a next" $ do
       ts <- vendingMachine
-      let formula = "E (F pay)"
+      let formula = "(X select)"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid existential quantifier" $ do
+    it "evaluates an invalid next" $ do
       ts <- vendingMachine
-      let formula = "E (G beer)"
+      let formula = "(X beer)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates a universal quantifier" $ do
+    it "evaluates an eventually" $ do
       ts <- vendingMachine
-      let formula = "A (F pay)"
+      let formula = "(F select)"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid universal quantifier" $ do
+    it "evaluates an invalid eventually" $ do
       ts <- vendingMachine
-      let formula = "A (F beer)"
+      let formula = "(F beer)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates a next" $ do
+    it "evaluates an always" $ do
       ts <- vendingMachine
-      let formula = "A (X select)"
+      let formula = "(G ((pay || select) || (X pay)))"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid next" $ do
+    it "evaluates an invalid always" $ do
       ts <- vendingMachine
-      let formula = "E (X beer)"
+      let formula = "(G beer)"
       doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates an eventually" $ do
+    it "evaluates an until" $ do
       ts <- vendingMachine
-      let formula = "A (F select)"
+      let formula = "(pay U select)"
       doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid eventually" $ do
+    it "evaluates an invalid until" $ do
       ts <- vendingMachine
-      let formula = "E (G beer)"
-      doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates an always" $ do
-      ts <- vendingMachine
-      let formula = "A (F select)"
-      doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid always" $ do
-      ts <- vendingMachine
-      let formula = "E (G beer)"
-      doEvaluate ts formula `shouldBe` Right False
-    it "doEvaluates an until" $ do
-      ts <- vendingMachine
-      let formula = "A (pay U select)"
-      doEvaluate ts formula `shouldBe` Right True
-    it "doEvaluates an invalid until" $ do
-      ts <- vendingMachine
-      let formula = "E (pay U beer)"
+      let formula = "(pay U beer)"
       doEvaluate ts formula `shouldBe` Right False

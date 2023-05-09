@@ -13,5 +13,5 @@ spec = do
   describe "CTL.Parser" CTL.ParserSpec.spec
   describe "CTL.Semantics" CTL.SemanticsSpec.spec
   describe "LTL.Parser" LTL.ParserSpec.spec
-  describe "CTL.Semantics" LTL.SemanticsSpec.spec
+  describe "LTL.Semantics" LTL.SemanticsSpec.spec
   describe "TS.Parser" TS.ParserSpec.spec

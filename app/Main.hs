@@ -24,11 +24,11 @@ runWithCTL tsFile formula = do
   f <- parseCTL formula >>= validateCTL ts
   return $ evaluateCTL ts f
 
-runWithLTL :: String -> String -> Either String Bool
-runWithLTL tsFile formula = do
+runWithLTL :: String -> String -> Int -> Either String Bool
+runWithLTL tsFile formula k = do
   ts <- parseTS tsFile >>= validateTS
   f <- parseLTL formula >>= validateLTL ts
-  return $ evaluateLTL ts f
+  return $ evaluateLTL ts f k
 
 main :: IO ()
 main = do

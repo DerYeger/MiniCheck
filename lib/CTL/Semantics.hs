@@ -3,7 +3,7 @@ module CTL.Semantics (evaluateCTL) where
 import CTL.Model
 import Data.Set (Set, empty, fromList, intersection, isSubsetOf, toList, union, (\\))
 import TS.Model
-import Utils (fSet)
+import Utils (fSet, post)
 
 evaluateCTL :: TransitionSystem -> StateFormula -> Bool
 evaluateCTL ts@(TS _ _ _ initialStates _ _) f = initialStates `isSubsetOf` satState ts f
@@ -34,6 +34,3 @@ satPath ts (Always inner) = largestSet satInner
     largestSet t = if candidates /= empty then t \\ candidates else t
       where
         candidates = fSet (\s -> (post ts s `intersection` t) == empty) t
-
-post :: TransitionSystem -> State -> Set State
-post (TS _ _ transitions _ _ _) s = fromList $ map (\(T _ _ to) -> to) $ filter (\(T from _ _) -> from == s) transitions
