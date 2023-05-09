@@ -44,9 +44,10 @@ parseLabels = do
 
 parseState :: Parser (State, Bool, [AtomicProposition])
 parseState = do
-  _ <- listItemStart >> space
+  _ <- listItemStart
+  initial <- option False (string ">" >> return True)
+  _ <- space
   name <- many letter
-  initial <- option False (string " (init)" >> return True)
   labels <- option [] parseLabels
   return (State name, initial, AtomicProposition name : labels)
 
