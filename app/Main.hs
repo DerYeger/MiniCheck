@@ -2,11 +2,12 @@ module Main where
 
 import CTL.Model (StateFormula)
 import CTL.Parser (parseCTL)
+import CTL.Validator (validateCTL)
 import Semantics (evaluate)
 import System.Environment (getArgs)
 import TS.Model (TransitionSystem)
 import TS.Parser (parseTS)
-import Validator (validate)
+import TS.Validator (validateTS)
 
 parse :: String -> String -> Either String (TransitionSystem, StateFormula)
 parse tsFile formula = do
@@ -14,12 +15,11 @@ parse tsFile formula = do
   f <- parseCTL formula
   return (ts, f)
 
-parseValidateAndEvaluate :: String -> String -> Either String Bool
-parseValidateAndEvaluate tsFile formula = do
-  ts <- parseTS tsFile
-  f <- parseCTL formula
-  (ts', f') <- validate ts f
-  return $ evaluate ts' f'
+runWithCTL :: String -> String -> Either String Bool
+runWithCTL tsFile formula = do
+  ts <- parseTS tsFile >>= validateTS
+  f <- parseCTL formula >>= validateCTL ts
+  return $ evaluate ts f
 
 main :: IO ()
 main = do
@@ -27,7 +27,7 @@ main = do
   args <- getArgs
   tsFile <- readFile $ head args
   let formula = args !! 1
-  let result = parseValidateAndEvaluate tsFile formula
+  let result = runWithCTL tsFile formula
   case result of
     Left err -> putStrLn err
     Right True -> putStrLn "The formula holds."
