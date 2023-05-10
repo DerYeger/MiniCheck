@@ -17,7 +17,7 @@ satState ts@(TS states _ _ _ _ labelingFunction) f = case f of
   Exists inner -> satPath ts inner
   ForAll (Next inner) -> satState ts (Negation (Exists (Next (Negation inner))))
   ForAll (Until left right) -> satState ts (Conjunct (Negation (Exists (Until (Negation right) (Conjunct (Negation left) (Negation right))))) (Negation (Exists (Always (Negation right)))))
-  _ -> error "Unsupported state formula"
+  _ -> error "Unsupported state formula. This is an internal error."
 
 satPath :: TransitionSystem -> PathFormula -> Set State
 satPath ts@(TS states _ _ _ _ _) (Next inner) = fSet (\s -> (post ts s `intersection` satState ts inner) /= empty) states

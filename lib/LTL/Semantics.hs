@@ -20,7 +20,6 @@ sat ts f sigma = case f of
   Conjunct left right -> sat ts left sigma && sat ts right sigma
   Next inner -> sat ts inner (tail sigma)
   Until left right -> any (\j -> sat ts right (drop j sigma) && all (\i -> sat ts left (drop i sigma)) [0 .. j - 1]) [0 .. length sigma - 1]
-  _ -> error "Unsupported LTL formula"
 
 type Path = [State]
 

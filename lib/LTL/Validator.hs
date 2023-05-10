@@ -13,5 +13,4 @@ propSet (Negation f) = propSet f
 propSet (Conjunct f1 f2) = propSet f1 `union` propSet f2
 propSet (BoolLiteral _) = empty
 propSet (Next f) = propSet f
-propSet (Always f) = propSet f
 propSet (Until f1 f2) = propSet f1 `union` propSet f2
