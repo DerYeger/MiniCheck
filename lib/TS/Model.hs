@@ -1,20 +1,27 @@
 {-# LANGUAGE InstanceSigs #-}
 
+-- | This module contains the data type for transition systems.
 module TS.Model where
 
 import Data.List (intercalate)
 import Data.Set (Set, toList)
 
+-- | A state in a transition system.
 newtype State = State String deriving (Show, Eq, Ord)
 
+-- | An action in a transition system.
 newtype Action = Action String deriving (Show, Eq, Ord)
 
+-- | An atomic proposition in a transition system.
 newtype AtomicProposition = AtomicProposition String deriving (Show, Eq, Ord)
 
+-- | A labeling function for a transition system.
 type LabelingFunction = State -> [AtomicProposition]
 
+-- | A transition in a transition system.
 data Transition = T State Action State deriving (Show, Eq, Ord)
 
+-- | A transition system.
 data TransitionSystem = TS (Set State) (Set Action) [Transition] (Set State) (Set AtomicProposition) LabelingFunction
 
 instance Show TransitionSystem where

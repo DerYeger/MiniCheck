@@ -12,10 +12,13 @@ vendingMachine = do
   file <- readFile "examples/vending-machine.txt"
   return $ fromRight (error "unwrap failed") (parseTS file)
 
-doEvaluate :: TransitionSystem -> String -> Either String Bool
-doEvaluate ts formula = do
+boundedEvaluate :: Int -> TransitionSystem -> String -> Either String Bool
+boundedEvaluate k ts formula = do
   f <- parseLTL formula
-  return $ evaluateLTL ts f 4
+  return $ evaluateLTL ts f k
+
+doEvaluate :: TransitionSystem -> String -> Either String Bool
+doEvaluate = boundedEvaluate 4
 
 spec :: Spec
 spec = describe "bounded ltl model checking" $ do
@@ -40,6 +43,23 @@ spec = describe "bounded ltl model checking" $ do
       ts <- vendingMachine
       let formula = "(G (select -> (X soda)))"
       doEvaluate ts formula `shouldBe` Right False
+  describe "with different bounds" $ do
+    it "evaluates with bound 1" $ do
+      ts <- vendingMachine
+      let formula = "(X (X (soda || beer)))"
+      boundedEvaluate 1 ts formula `shouldBe` Right False
+    it "evaluates with bound 2" $ do
+      ts <- vendingMachine
+      let formula = "(X (X (soda || beer)))"
+      boundedEvaluate 2 ts formula `shouldBe` Right False
+    it "evaluates with bound 3" $ do
+      ts <- vendingMachine
+      let formula = "(X (X (soda || beer)))"
+      boundedEvaluate 3 ts formula `shouldBe` Right True
+    it "evaluates with bound 4" $ do
+      ts <- vendingMachine
+      let formula = "(X (X (soda || beer)))"
+      boundedEvaluate 4 ts formula `shouldBe` Right True
   describe "the algorithm" $ do
     it "evaluates a boolean literal" $ do
       ts <- vendingMachine

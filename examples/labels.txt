@@ -1,0 +1,12 @@
+States:
+-> pay: zahlen
+- soda: limonade, lemonade
+- select: waehlen
+- beer: bier
+
+Transitions:
+- pay -> insert_coin -> select
+- select -> τ -> soda
+- select -> τ -> beer
+- soda -> get_soda -> pay
+- beer -> get_beer -> pay

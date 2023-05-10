@@ -28,6 +28,10 @@ spec = describe "ctl model checking" $ do
       ts <- vendingMachine
       let formula = "E (F soda)"
       doEvaluate ts formula `shouldBe` Right True
+    it "exists always selection followed by soda -- fixed" $ do
+      ts <- vendingMachine
+      let formula = "E (G (select -> E (X soda)))"
+      doEvaluate ts formula `shouldBe` Right True
     it "exists always selection followed by soda" $ do
       ts <- vendingMachine
       let formula = "E (G (select -> A (X soda)))"

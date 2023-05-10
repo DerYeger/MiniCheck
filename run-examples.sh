@@ -4,8 +4,11 @@ clear
 echo "-----Help-----"
 MiniCheck --help
 
-echo "\n-----Validate-----"
+echo "\n-----Validate (Valid)-----"
 MiniCheck validate ./examples/vending-machine.txt
+
+echo "\n-----Validate (Invalid)-----"
+MiniCheck validate ./examples/invalid.txt
 
 echo "\n-----CTL (Valid)-----"
 MiniCheck ctl ./examples/vending-machine.txt "E (F soda)"
