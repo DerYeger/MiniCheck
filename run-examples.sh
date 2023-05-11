@@ -21,3 +21,6 @@ MiniCheck ltl ./examples/vending-machine.txt "(F (beer || soda))" 42
 
 echo "\n-----LTL (Invalid)-----"
 MiniCheck ltl ./examples/vending-machine.txt "(F beer)" 42
+
+# Make the script return successfully
+true
