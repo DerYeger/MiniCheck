@@ -23,7 +23,16 @@ doEvaluate = boundedEvaluate 4
 spec :: Spec
 spec = describe "bounded ltl model checking" $ do
   describe "the internals" $ do
-    it "computes bounded paths from initial states" $ do
+    it "computes bounded paths of length 1 from initial states" $ do
+      ts <- vendingMachine
+      boundedPaths ts 1 `shouldBe` [[State "pay"]]
+    it "computes bounded paths of length 2 from initial states" $ do
+      ts <- vendingMachine
+      boundedPaths ts 2 `shouldBe` [[State "pay", State "select"]]
+    it "computes bounded paths of length 3 from initial states" $ do
+      ts <- vendingMachine
+      boundedPaths ts 3 `shouldBe` [[State "pay", State "select", State "beer"], [State "pay", State "select", State "soda"]]
+    it "computes bounded paths of length 4 from initial states" $ do
       ts <- vendingMachine
       boundedPaths ts 4 `shouldBe` [[State "pay", State "select", State "beer", State "pay"], [State "pay", State "select", State "soda", State "pay"]]
     it "computes traces from paths" $ do
