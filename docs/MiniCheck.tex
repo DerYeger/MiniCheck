@@ -6,9 +6,27 @@
 
 \subsection{Build Tool}
 
-% TODO Describe cabal and used GHC version
-% TODO Describe building the program
-% TODO Describe running the program
+The program is implemented using the build tool Cabal (version 3.10.1.0) and GHC (version 9.2.5).
+During development, the Haskell Language Server (HSL) (version 1.9.1.0) was used.
+
+\subsubsection{Building}
+The executable can be built by invoking the command \verb|cabal build|.
+However, installing it with the command \verb|cabal install| is preferable as this approach enables the immediate execution of the program via the CLI.
+
+\subsubsection{Running}
+
+Running the program is possible by invoking \verb|cabal run|, or \verb|MiniCheck| if it was installed using \verb|cabal install|.
+Appending \verb|--help| prints the help text.
+The program has three modes, which are as follows:
+
+\paragraph{minicheck validate TS\_FILE}
+Parse and validate the transition system found at \verb|TS_FILE|.
+
+\paragraph{minicheck ctl TS\_FILE CTL\_FORMULA}
+Evaluate the CTL formula in the transition system found at \verb|TS_FILE|.
+
+\paragraph{minicheck ltl TS\_FILE LTL\_FORMULA BOUND}
+Evaluate the LTL formula in the transition system found at \verb|TS_FILE| with \verb|BOUND| as the maximum path length.
 
 \subsection{Dependencies}
 
