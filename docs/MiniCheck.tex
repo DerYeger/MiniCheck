@@ -30,7 +30,10 @@ Evaluate the LTL formula in the transition system found at \verb|TS_FILE| with \
 
 \subsection{Dependencies}
 
-% TODO Libraries and Haskell language extensions
+Beyond the \textit{base} and \textit{containers} libraries, which are usually part of the Haskell prelude, this program uses \textit{cmdargs} (version 0.10.22) and \textit{parsec} (version 3.1.16.1).
+The former provides functionality for parsing and validating command line arguments, while the latter's monad parser forms the basis of the program's CTL, LTL, and transition system parsers.
+
+% TODO Haskell Language extensions
 
 \subsection{Testing Framework}
 
@@ -42,7 +45,7 @@ Evaluate the LTL formula in the transition system found at \verb|TS_FILE| with \
 
 \section{Modules}
 
-% TODO Describe module partitioning (ctl, ltl, model)
+% TODO Describe module partitioning (ctl, ltl, ts)
 
 \section{Testing}
 
