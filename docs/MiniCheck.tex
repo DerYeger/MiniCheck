@@ -31,13 +31,13 @@ Evaluate the LTL formula in the transition system found at \verb|TS_FILE| with \
 \subsection{Dependencies}
 
 Beyond the \textit{base} and \textit{containers} libraries, which are usually part of the Haskell prelude, this program uses \textit{cmdargs} (version 0.10.22) and \textit{parsec} (version 3.1.16.1).
-The former provides functionality for parsing and validating command line arguments, while the latter's monad parser forms the basis of the program's CTL, LTL, and transition system parsers.
+The former provides functionality for parsing and validating command line arguments, while the latter's monad parser forms the basis of the program's CTL, LTL, and transition system (TS) parsers.
 
 % TODO Haskell Language extensions
 
 \subsection{Testing Framework}
 
-% TODO Testing libraries and frameworks	
+The testing framework \textit{hspec} is used to execute unit tests for the CTL, LTL, and TS parsers, as well as the model checker algorithms.
 
 \section{Extension}
 
@@ -45,7 +45,23 @@ The former provides functionality for parsing and validating command line argume
 
 \section{Modules}
 
-% TODO Describe module partitioning (ctl, ltl, ts)
+The source code is distributed accross three directories.
+
+\subsection{app}
+
+This directory contains the application logic that is invoked via the CLI.
+It is responsible for argument validation and calling the corresponding library methods.
+
+\subsection{lib}
+
+This directory contains the core logic of the program.
+The three sub-directories, CTL, LTL, and TS, each contain modules for their respective models, parsers, and validators.
+Further, CTL and LTL also each contain a module for their respective model checking algorithm.
+Finally, a Utils model contains common utilities required by multiple other modules. 
+
+\subsection{test}
+
+This directory contains the spec files for the individual modules as well as an entry point for the test execution.
 
 \section{Testing}
 
