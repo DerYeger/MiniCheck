@@ -1,6 +1,101 @@
 \documentclass[11pt]{article}
 
+\usepackage{amssymb}
+
 \begin{document}
+
+\section{Background}
+
+\subsection{Syntax}
+
+All labels, i.e., atomic propositions, as well as state names can only consist of letters without numbers and whitespace.
+This does not limit they're expressiveness, as a simple transformation of label names does not affect their boolean values.
+E.g., \verb|nsoda === 0| is equivalent to \verb|numberOfSodaIsZero|, as both propositions only represent a boolean value.
+
+All formulas require brackets as described in the sections below.
+This approach was chosen to avoid ambiguity regarding operator precedence.
+
+\subsection{Transition Systems}
+
+The syntax of transition systems is displayed in the example file \verb|examples/vending-machine.txt|.
+
+The arrow indicates initial states, while dashes indicate regular states.
+Each state is automatically labelled by itself, i.e., its name.
+Further labels, i.e., atomic propositions, can be specified by appending them to the state name, separated by a colon (see \verb|examples/labels.txt|).
+
+\subsubsection{Validations}
+
+The following transition system validations are implemented:
+
+\begin{itemize}
+  \item A transition system must have at least one initial state.
+  \item The transitions may only specify defined states.
+  \item All states must have an outgoing transition.
+\end{itemize}
+
+\subsection{CTL Formulas}
+
+\subsubsection{State Formulas}
+
+\begin{tabular}{l|ll}
+  & Formula & Syntax \\
+  \hline
+  & $true$ & \verb|true| \\
+  & $\neg\Phi$ & \verb|!(|$\Phi$\verb|)| \\
+  & $\Phi_1 \wedge \Phi_2$ & \verb|(|$\Phi_1$\verb| && |$\Phi_2$\verb|)| \\
+  & $\Phi_1 \vee \Phi_2$ & \verb|(|$\Phi_1$\verb[ || [$\Phi_2$\verb|)| \\
+  & $\Phi_1 \rightarrow \Phi_2$ & \verb|(|$\Phi_1$\verb| -> |$\Phi_2$\verb|)| \\
+  & $\Phi_1 \iff \Phi_2$ & \verb|(|$\Phi_1$\verb| <-> |$\Phi_2$\verb|)| \\
+  & $\Phi_1 \oplus \Phi_2$ & \verb|(|$\Phi_1$\verb| xor |$\Phi_2$\verb|)| \\
+  & $\exists \Phi$ & \verb|(E |$\Phi$\verb|)| \\
+  & $\forall \Phi$ & \verb|(A |$\Phi$\verb|)| \\
+\end{tabular}
+
+\subsubsection{Path Formulas}
+
+\begin{tabular}{l|ll}
+  & Formula & Syntax \\
+  \hline
+  & $\Phi_1 \mathcal{U} \Phi_2$ & \verb|(|$\Phi_1$\verb| U |$\Phi_2$\verb|)| \\
+  & $\circ \Phi$ & \verb|(X |$\Phi$\verb|)| \\
+  & $\diamond \Phi$ & \verb|(F |$\Phi$\verb|)| \\
+  & $\square \Phi$ & \verb|(G |$\Phi$\verb|)| \\
+\end{tabular}
+
+\subsubsection{Validations}
+
+The following CTL formula validations are implemented:
+
+\begin{itemize}
+  \item All atomic propositions used in a formula must be defined in the transition system.
+\end{itemize}
+
+\subsection{LTL Formulas}
+
+\begin{tabular}{l|ll}
+  & Formula & Syntax \\
+  \hline
+  & $true$ & \verb|true| \\
+  & $\neg\Phi$ & \verb|!(|$\Phi$\verb|)| \\
+  & $\Phi_1 \wedge \Phi_2$ & \verb|(|$\Phi_1$\verb| && |$\Phi_2$\verb|)| \\
+  & $\Phi_1 \vee \Phi_2$ & \verb|(|$\Phi_1$\verb[ || [$\Phi_2$\verb|)| \\
+  & $\Phi_1 \rightarrow \Phi_2$ & \verb|(|$\Phi_1$\verb| -> |$\Phi_2$\verb|)| \\
+  & $\Phi_1 \iff \Phi_2$ & \verb|(|$\Phi_1$\verb| <-> |$\Phi_2$\verb|)| \\
+  & $\Phi_1 \oplus \Phi_2$ & \verb|(|$\Phi_1$\verb| xor |$\Phi_2$\verb|)| \\
+  & $\Phi_1 \mathcal{U} \Phi_2$ & \verb|(|$\Phi_1$\verb| U |$\Phi_2$\verb|)| \\
+  & $\circ \Phi$ & \verb|(X |$\Phi$\verb|)| \\
+  & $\diamond \Phi$ & \verb|(F |$\Phi$\verb|)| \\
+  & $\square \Phi$ & \verb|(G |$\Phi$\verb|)| \\
+\end{tabular}
+
+\subsubsection{Validations}
+
+The following LTL formula validations are implemented:
+
+\begin{itemize}
+  \item All atomic propositions used in a formula must be defined in the transition system.
+\end{itemize}
+
 
 \section{Development}
 
