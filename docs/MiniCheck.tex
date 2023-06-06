@@ -1,15 +1,34 @@
 \documentclass[11pt]{article}
 
 \usepackage{amssymb}
+\usepackage{listings}
+
+\title{MiniCheck Documentation}
+\author{Mario Roseneder, 0927370\\ Jan M\"uller, 12102339}
 
 \begin{document}
 
+\maketitle
+
+\section{Introduction}
+
+This document documents the MiniCheck implementation for the course \textit{Advanced Functional Programming} by the TU Wien during the summer term of 2023.
+
+The bounded LTL model checking algorithm was chosen as the extension to the core CTL model checker.
+This mode is accessible via the CLI as described in subsection \ref{subsec:dev:running}.
+
+Section \ref{sec:background} briefly summarizes the syntax for transition system (TS), as well as CTL and LTL formulas.
+Next, section \ref{sec:dev} describes the development aspects of the project, including build tools, commands, and dependencies.
+The modules of the source code are described in section \ref{sec:modules}.
+Finally, section \ref{sec:testing} covers the testing and coverage of the application.
+
 \section{Background}
+\label{sec:background}
 
 \subsection{Syntax}
 
 All labels, i.e., atomic propositions, as well as state names can only consist of letters without numbers and whitespace.
-This does not limit they're expressiveness, as a simple transformation of label names does not affect their boolean values.
+This does not limit their expressiveness, as a simple transformation of label names does not affect their boolean values.
 E.g., \verb|nsoda === 0| is equivalent to \verb|numberOfSodaIsZero|, as both propositions only represent a boolean value.
 
 All formulas require brackets as described in the sections below.
@@ -17,11 +36,27 @@ This approach was chosen to avoid ambiguity regarding operator precedence.
 
 \subsection{Transition Systems}
 
-The syntax of transition systems is displayed in the example file \verb|examples/vending-machine.txt|.
+The syntax of transition systems is displayed in the example below:
 
-The arrow indicates initial states, while dashes indicate regular states.
+\begin{lstlisting}
+States:
+-> pay
+- soda
+- select
+- beer
+
+Transitions:
+- pay -> insert_coin -> select
+- select -> τ -> soda
+- select -> τ -> beer
+- soda -> get_soda -> pay
+- beer -> get_beer -> pay
+\end{lstlisting}
+
+
+The arrow indicates an initial state, while dashes indicate regular states.
 Each state is automatically labelled by itself, i.e., its name.
-Further labels, i.e., atomic propositions, can be specified by appending them to the state name, separated by a colon (see \verb|examples/labels.txt|).
+Further labels, i.e., atomic propositions, can be specified by appending them to the state name, separated by a colon (e.g., \verb|- beer: bier, bara|).
 
 \subsubsection{Validations}
 
@@ -96,8 +131,8 @@ The following LTL formula validations are implemented:
   \item All atomic propositions used in a formula must be defined in the transition system.
 \end{itemize}
 
-
 \section{Development}
+\label{sec:dev}
 
 \subsection{Build Tool}
 
@@ -127,7 +162,7 @@ Evaluate the LTL formula in the transition system found at \verb|TS_FILE| with \
 \subsection{Dependencies}
 
 Beyond the \textit{base} and \textit{containers} libraries, which are usually part of the Haskell prelude, this program uses \textit{cmdargs} (version 0.10.22) and \textit{parsec} (version 3.1.16.1).
-The former provides functionality for parsing and validating command line arguments, while the latter's monad parser forms the basis of the program's CTL, LTL, and transition system (TS) parsers.
+The former provides functionality for parsing and validating command line arguments, while the latter's monad parser forms the basis of the program's CTL, LTL, and TS parsers.
 
 Further, the following language extensions are enabled:
 
@@ -137,17 +172,8 @@ Further, the following language extensions are enabled:
   \item NamedFieldPuns
 \end{itemize}
 
-
-\subsection{Testing Framework}
-
-The testing framework \textit{hspec} is used to execute unit tests for the CTL, LTL, and TS parsers, as well as the model checker algorithms.
-
-\section{Extension}
-
-This application implemented the bounded LTL model checking extension.
-This model checker mode is accessible via the mode described in subsection \ref{subsec:dev:running}.
-
 \section{Modules}
+\label{sec:modules}
 
 The source code is distributed across the following three directories.
 
@@ -168,21 +194,15 @@ Finally, a Utils model contains common utilities required by multiple other modu
 This directory contains the spec files for the individual modules as well as an entry point for the test execution.
 
 \section{Testing}
-
+\label{sec:testing}
 
 All parsers and model checking algorithms have been unit tested.
 The tests were used for test-driven development of the respective functionality.
 As such, they focus on validating the functionality of a single unit, e.g., a single formula construct.
 
+The testing framework \textit{hspec} is used to execute unit tests for the CTL, LTL, and TS parsers, as well as the model checker algorithms.
+
 An expression coverage of 88\% was achieved.
 The majority of untested code is the \verb|Show| instance implementation of transition systems. 
-
-\section{Profiling}
-
-% TODO Describe profiling
-
-\section{Known Issues and Limitations}
-
-There are no known issues or limitatons.
 
 \end{document}
