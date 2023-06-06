@@ -13,7 +13,8 @@ During development, the Haskell Language Server (HSL) (version 1.9.1.0) was used
 The executable can be built by invoking the command \verb|cabal build|.
 However, installing it with the command \verb|cabal install| is preferable as this approach enables the immediate execution of the program via the CLI.
 
-\subsubsection{Running}
+\subsection{Running}
+\label{subsec:dev:running}
 
 Running the program is possible by invoking \verb|cabal run|, or \verb|MiniCheck| if it was installed using \verb|cabal install|.
 Appending \verb|--help| prints the help text.
@@ -33,7 +34,14 @@ Evaluate the LTL formula in the transition system found at \verb|TS_FILE| with \
 Beyond the \textit{base} and \textit{containers} libraries, which are usually part of the Haskell prelude, this program uses \textit{cmdargs} (version 0.10.22) and \textit{parsec} (version 3.1.16.1).
 The former provides functionality for parsing and validating command line arguments, while the latter's monad parser forms the basis of the program's CTL, LTL, and transition system (TS) parsers.
 
-% TODO Haskell Language extensions
+Further, the following language extensions are enabled:
+
+\begin{itemize}
+  \item DerivedDataTypeable
+  \item InstanceSigs
+  \item NamedFieldPuns
+\end{itemize}
+
 
 \subsection{Testing Framework}
 
@@ -41,11 +49,12 @@ The testing framework \textit{hspec} is used to execute unit tests for the CTL, 
 
 \section{Extension}
 
-% TODO Describe implemented extension (LTL model checking)
+This application implemented the bounded LTL model checking extension.
+This model checker mode is accessible via the mode described in subsection \ref{subsec:dev:running}.
 
 \section{Modules}
 
-The source code is distributed accross three directories.
+The source code is distributed across the following three directories.
 
 \subsection{app}
 
@@ -65,8 +74,13 @@ This directory contains the spec files for the individual modules as well as an 
 
 \section{Testing}
 
-% TODO Describe testing methodology, focus, and potentially untested code
-% TODO Describe coverage
+
+All parsers and model checking algorithms have been unit tested.
+The tests were used for test-driven development of the respective functionality.
+As such, they focus on validating the functionality of a single unit, e.g., a single formula construct.
+
+An expression coverage of 88\% was achieved.
+The majority of untested code is the \verb|Show| instance implementation of transition systems. 
 
 \section{Profiling}
 
@@ -74,6 +88,6 @@ This directory contains the spec files for the individual modules as well as an 
 
 \section{Known Issues and Limitations}
 
-% TODO Describe known issues and limitations
+There are no known issues or limitatons.
 
 \end{document}
