@@ -9,6 +9,6 @@
   "dependencies": {
     "@slidev/cli": "^0.42.5",
     "@slidev/theme-default": "latest",
-    "@slidev/theme-seriph": "latest"
+    "playwright-chromium": "^1.35.1"
   }
 }
