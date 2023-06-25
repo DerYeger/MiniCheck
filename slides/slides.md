@@ -80,6 +80,8 @@ Transitions:
 ```
 
 ---
+layout: two-cols
+---
 
 # CTL Formulas
 
@@ -91,6 +93,12 @@ Transitions:
 - `E (F soda)`
 - `A (pay U select)`
 
+::right::
+
+<img src="img/ctl.png" class="h-120 ml-18" />
+
+---
+layout: two-cols
 ---
 
 # LTL Formulas
@@ -102,6 +110,10 @@ Transitions:
 
 - `(F (beer || soda))`
 - `(pay U select)`
+
+::right::
+
+<img src="img/ltl.png" class="h-80 ml-12" />
 
 ---
 
@@ -115,7 +127,7 @@ Transitions:
   - `minicheck ltl TS_FILE LTL_FORMULA BOUND`
 
 ---
-layout: center
----
+
+## layout: center
 
 # Demo
