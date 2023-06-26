@@ -127,7 +127,7 @@ layout: two-cols
   - `minicheck ltl TS_FILE LTL_FORMULA BOUND`
 
 ---
-
-## layout: center
+layout: center
+---
 
 # Demo
